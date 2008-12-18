@@ -1,9 +1,12 @@
+.gitignore
 History.txt
 Manifest.txt
 README.txt
 Rakefile
 bin/ical_punch
+ical_punch.gemspec
 lib/ical_punch.rb
+spec/fixtures/punch.yml
 spec/ical_punch_spec.rb
 spec/spec_helper.rb
 tasks/ann.rake
@@ -19,4 +22,3 @@ tasks/setup.rb
 tasks/spec.rake
 tasks/svn.rake
 tasks/test.rake
-test/test_ical_punch.rb

@@ -1,14 +1,14 @@
 ical_punch
-    by FIXME (your name)
-    FIXME (url)
+    by Rob Kaufman
+    notch8.com
 
 == DESCRIPTION:
 
-FIXME (describe your package)
+ical_punch converts between iCalendar files and the punch.yml format
 
 == FEATURES/PROBLEMS:
 
-* FIXME (list of features or problems)
+* can convert from punch.yml to iCalendar format
 
 == SYNOPSIS:
 
@@ -16,17 +16,17 @@ FIXME (describe your package)
 
 == REQUIREMENTS:
 
-* FIXME (list of requirements)
+* A .punch.yml formated file
 
 == INSTALL:
 
-* FIXME (sudo gem install, anything else)
+* sudo gem install notch8-ical_punch
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME (different license?)
+Copyright (c) 2008 Rob Kaufman
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
