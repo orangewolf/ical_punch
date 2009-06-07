@@ -1,7 +1,7 @@
 .gitignore
 History.txt
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
 bin/ical_punch
 ical_punch.gemspec

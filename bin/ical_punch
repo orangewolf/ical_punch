@@ -4,5 +4,124 @@ require File.expand_path(
     File.join(File.dirname(__FILE__), '..', 'lib', 'ical_punch'))
 
 # Put your code here
+require 'optparse'
+
+OPTIONS = {}
+MANDATORY_OPTIONS = %w[]
+
+parser = OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Usage: #{File.basename($0)} [command] <project>
+
+Options are:
+BANNER
+  opts.separator ''
+  opts.on('-v', '--version',
+          "Show the #{File.basename($0)} version number and exit") { puts "#{File.basename($0)} #{Punch.verson}"; exit  }
+  # opts.on('--after [TIME]', String,
+  #         "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
+  # opts.on('--before [TIME]', String,
+  #         "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
+  # opts.on('--at [TIME]', '--time [TIME]', String,
+  #         "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
+  # opts.on('-m', '--message [MESSAGE]', String,
+  #         "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
+  opts.on('-f', '--file [FILE_NAME]', String,
+            "File name of the you want to output to") {|message| OPTIONS[:file_name] = file_name}
+  opts.on("-h", "--help",
+          "Show this help message.") { puts opts; exit }
+  opts.parse!(ARGV)
+
+  if MANDATORY_OPTIONS && MANDATORY_OPTIONS.find { |option| OPTIONS[option.to_sym].nil? }
+    puts opts; exit
+  end
+end
+
+command = ARGV[0]
+
+unless command
+  puts "Usage: #{File.basename($0)} [command] <project>"
+  exit
+end
+
+project = ARGV[1]
+
+IcalPunch.load
+
+commands = {
+  'to_ical' => lambda do |project|
+    if OPTIONS[:file_name]
+      IcalPunch.to_ical(project, OPTIONS[:file_name])
+    else
+      IcalPunch.to_ical(project)
+    end
+  end
+  # 'status' => lambda do |project|
+  #   result = Punch.status(project)
+  #   if project
+  #     puts result.inspect
+  #   else
+  #     puts result.to_yaml
+  #   end
+  # end,
+  # 'total'  => lambda do |project|
+  #   result = Punch.total(project, OPTIONS.merge(:format => true))
+  #   if project
+  #     puts result.inspect
+  #   else
+  #     puts result.to_yaml
+  #   end
+  # end,
+  # 'in'     => lambda do |project|
+  #   if project
+  #     if Punch.in(project, OPTIONS)
+  #       Punch.write
+  #     else
+  #       puts "Already punched in to '#{project}'"
+  #     end
+  #   else
+  #     puts "Project required"
+  #   end
+  # end,
+  # 'delete' => lambda do |project|
+  #   if project
+  #     Punch.write if result = Punch.delete(project)
+  #     puts result.inspect
+  #   else
+  #     puts "Project required"
+  #   end
+  # end,
+  # 'out' => lambda do |project|
+  #   if Punch.out(project, OPTIONS)
+  #     Punch.write
+  #   else
+  #     message = 'Already punched out of '
+  #     message += project ? "'#{project}'" : 'all projects'
+  #     puts message
+  #   end
+  # end,
+  # 'log' => lambda do |project|
+  #   if project
+  #     if message = ARGV[2]
+  #       if Punch.log(project, message)
+  #         Punch.write
+  #       else
+  #         puts "Not punched in to '#{project}'"
+  #       end
+  #     else
+  #       puts "Message required"
+  #     end
+  #   else
+  #     puts "Project required"
+  #   end
+  # end,
+  # 'list' => lambda { |project|  puts Punch.list(project, OPTIONS).to_yaml },
+}
+
+if command_code = commands[command]
+  command_code.call(project)
+else
+  puts "Command '#{command}' unknown"
+end
 
 # EOF

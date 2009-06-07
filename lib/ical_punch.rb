@@ -1,4 +1,5 @@
 # $Id$
+require 'rubygems'
 require 'icalendar'
 require 'date'
 
@@ -17,6 +18,14 @@ module IcalPunch
       @data = value
     end
     
+    def calendars
+      @calendars
+    end
+    
+    def calendars=(value)
+      @calendars = value
+    end
+    
     def load(file_path = '~/.punch.yml')
       begin
         raw = File.read(File.expand_path(file_path))
@@ -28,26 +37,70 @@ module IcalPunch
       true
     end
     
-    def calendars
-      @calendars = []
-      data.each do |key, value|
-        calendar = Icalendar::Calendar.new
-        value.each do |entry|
-          calendar.event do
-            dtstart     entry["in"].strftime("%Y%m%dT%H%M%S")
-            dtend       entry["out"].strftime("%Y%m%dT%H%M%S")
-            summary     key
-            description entry["log"].join("\n")
-          end
-        end
-        @calendars << calendar
+    def write(file_path = "~/.punch.yml")
+      File.open(File.expand_path(file_path), 'w') do |file|
+        file.puts @data.to_yaml
       end
+    end
+    
+    def punch_to_calendars
+      data.keys.each do |key|
+        punch_to_calendar(key)
+      end
+    end
+    
+    def punch_to_calendar(project)
+      @calendars = []
+      value = data[project]
+      calendar = Icalendar::Calendar.new
+      calendar.prodid += "/#{project}"
+      value.each do |entry|
+        check_entry(entry) || next
+        start_time = entry["in"].strftime("%Y%m%dT%H%M%S")
+        end_time   = entry["out"].strftime("%Y%m%dT%H%M%S")
+        calendar.event do
+          dtstart     start_time
+          dtend       end_time
+          summary     project
+          description entry["log"].join("\n")
+        end
+      end
+      @calendars << calendar
       @calendars
     end
     
-    def to_ical(file_path = "~/punch.ics")
-      File.open(file_path, "w") do |file|
-        file.write(calendars.to_ical)
+    def check_entry(entry)
+      if entry["in"].nil?
+        puts "Error processing start time for #{entry.inspect}"
+        return false
+      end
+      if entry["out"].nil?
+         puts "Error processing end time for #{entry.inspect}"
+         return false
+      end
+      return true
+    end
+    
+    def calendars_to_punch
+      @data = {}
+      @calendars.each do |calendar|
+        key = calendar.prodid.split("/").last
+        @data[key] = calendar.events.collect do |event|
+          {"out" => event.dtend, "in" => event.dtstart, "total" => nil, "log" => event.description.to_s}
+        end
+      end
+      return @data
+    end
+    
+    def to_ical(project_name, file_path = "~/punch.ics")
+      File.open(File.expand_path(file_path), "w") do |file|
+        file.write(punch_to_calendar(project_name).to_ical)
+      end
+    end
+    
+    def from_ical(file_path = "~/punch.ics")
+      File.open(File.expand_path(file_path), "r") do |file|
+        @calendars = Icalendar.parse(file)
       end
     end
   end
