@@ -1,10 +1,7 @@
-# $Id$
-require 'rubygems'
 __DIR__ = File.dirname(__FILE__)
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-require File.join(File.dirname(__FILE__), %w[spec_helper])
-
-describe IcalPunch do
+describe "IcalPunch" do
   it "should load a punch file" do
     IcalPunch.data.should be_nil
     IcalPunch.load
@@ -12,10 +9,10 @@ describe IcalPunch do
   end
   
   it "should output ical from punch data" do
-    IcalPunch.load(File.join("fixtures", "punch.yml"))
+    IcalPunch.load(File.join(__DIR__,"fixtures", "punch.yml"))
     IcalPunch.punch_to_calendars
     IcalPunch.calendars.each do |ical|
-      Icalendar.parse(ical.to_ical).first.events.first.dtend.should == DateTime.parse("2008-09-02T18:30:00")
+      Icalendar.parse(ical.to_ical).first.events.first.dtend.to_s.should == DateTime.parse("2008-09-02T18:30:00").to_s
     end
   end
   
@@ -48,6 +45,4 @@ describe IcalPunch do
     IcalPunch.data.should_not be_nil
     #IcalPunch.data.to_yaml.should be_eql(original_data.to_yaml)
   end
-
 end
-# EOF

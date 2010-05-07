@@ -1,3 +1,0 @@
-== 0.5.0 / 2008-12-17
-
-* Initial release with punch.yml to ical functionality

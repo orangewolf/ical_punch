@@ -1,2 +1,22 @@
+## MAC OS
+.DS_Store
+
+## TEXTMATE
+*.tmproj
+tmtags
+
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## PROJECT::GENERAL
 coverage
+rdoc
+pkg
 spec/tmp
+
+## PROJECT::SPECIFIC
