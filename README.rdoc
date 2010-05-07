@@ -9,6 +9,14 @@ ical_punch converts between iCalendar files and the punch.yml format
 
 * sudo gem install ical_punch
 
+== USAGE:
+
+For project PROJ_NAME:
+   ical_punch to_ical PROJ_NAME
+
+For all:
+   ical_punch to_ical
+
 == Note on Patches/Pull Requests
  
 * Fork the project.

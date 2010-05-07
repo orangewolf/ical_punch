@@ -44,9 +44,11 @@ module IcalPunch
     end
     
     def punch_to_calendars
+      @all_calendars = []
       data.keys.each do |key|
-        punch_to_calendar(key)
+        @all_calendars << punch_to_calendar(key)
       end
+      return @all_calendars
     end
     
     def punch_to_calendar(project)
@@ -93,8 +95,17 @@ module IcalPunch
     end
     
     def to_ical(project_name, file_path = "~/punch.ics")
-      File.open(File.expand_path(file_path), "w") do |file|
-        file.write(punch_to_calendar(project_name).to_ical)
+      if project_name && project_name.size > 0
+        File.open(File.expand_path(file_path), "w") do |file|
+          file.write(punch_to_calendar(project_name).to_ical)
+        end
+      else
+        punch_to_calendars.each_with_index do |calendar_data, i|
+          file_name = file_path.gsub(".ics", "#{i}.ics")
+          File.open(File.expand_path(file_name), "w") do |file|
+            file.write(calendar_data.to_ical)
+          end
+        end        
       end
     end
     

@@ -50,7 +50,7 @@ IcalPunch.load
 
 commands = {
   'to_ical' => lambda do |project|
-    if OPTIONS[:file_name]
+    if OPTIONS[:file_name] && OPTIONS[:file_name].size > 0
       IcalPunch.to_ical(project, OPTIONS[:file_name])
     else
       IcalPunch.to_ical(project)
