@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/ical_punch",
+     "ical_punch.gemspec",
      "lib/ical_punch.rb",
      "spec/fixtures/punch.yml",
      "spec/fixtures/test.ics",
