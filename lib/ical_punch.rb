@@ -86,9 +86,14 @@ module IcalPunch
     def calendars_to_punch
       @data = {}
       @calendars.each do |calendar|
-        key = calendar.prodid.split("/").last
+        key = calendar.events.first.summary
         @data[key] = calendar.events.collect do |event|
-          {"out" => event.dtend, "in" => event.dtstart, "total" => nil, "log" => event.description.to_s}
+          if event.description.nil?
+            description = ["punch in @ #{event.dtstart}", "punch out @ #{event.dtend}"]
+          else
+            description = event.description.split("\n")
+          end
+          {"out" => event.dtend, "in" => event.dtstart, "total" => nil, "log" => description}
         end
       end
       return @data
@@ -114,6 +119,7 @@ module IcalPunch
         @calendars = Icalendar.parse(file)
       end
     end
+    
   end
   
   

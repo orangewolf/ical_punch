@@ -18,16 +18,8 @@ BANNER
   opts.separator ''
   opts.on('-v', '--version',
           "Show the #{File.basename($0)} version number and exit") { puts "#{File.basename($0)} #{Punch.verson}"; exit  }
-  # opts.on('--after [TIME]', String,
-  #         "Restrict command to only after the given time") { |time|  OPTIONS[:after] = Time.parse(time) }
-  # opts.on('--before [TIME]', String,
-  #         "Restrict command to only before the given time") { |time|  OPTIONS[:before] = Time.parse(time) }
-  # opts.on('--at [TIME]', '--time [TIME]', String,
-  #         "Use the given time to punch in/out") { |time|  OPTIONS[:time] = Time.parse(time) }
-  # opts.on('-m', '--message [MESSAGE]', String,
-  #         "Add the given log message when punching in/out") { |message|  OPTIONS[:message] = message }
   opts.on('-f', '--file [FILE_NAME]', String,
-            "File name of the you want to output to") {|message| OPTIONS[:file_name] = file_name}
+            "File name of the you want to output to") {|file_name| OPTIONS[:file_name] = file_name}
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
   opts.parse!(ARGV)
@@ -55,7 +47,22 @@ commands = {
     else
       IcalPunch.to_ical(project)
     end
+  end,
+  'from_ical' => lambda do |project|
+    if OPTIONS[:file_name] && OPTIONS[:file_name].size > 0
+      IcalPunch.load(OPTIONS[:file_name])
+      IcalPunch.from_ical(project)
+      IcalPunch.calendars_to_punch
+      IcalPunch.write(OPTIONS[:file_name])
+    else
+      IcalPunch.load
+      IcalPunch.from_ical(project)
+      IcalPunch.calendars_to_punch
+      IcalPunch.write()
+    end
   end
+
+
   # 'status' => lambda do |project|
   #   result = Punch.status(project)
   #   if project
